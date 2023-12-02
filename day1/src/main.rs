@@ -1,6 +1,8 @@
 use std::env;
 use std::fs;
+use std::fs::File;
 use std::io::{self, BufRead};
+use std::path::Path;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -16,7 +18,8 @@ fn main() {
         let mut calibration_total = 0;
         for line in lines {
             if let Ok(text) = line {
-                // calibration_total +=
+                get_calibration_value(text);
+                break;
             }
         }
         println!("Total: {}", calibration_total);
@@ -29,6 +32,8 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-// fn get_calibration_value(line: String) -> i32 {
-
-// }
+fn get_calibration_value(line: String) -> i32 {
+    let s = line.replace(&['(', ')', ',', '\"', '.', ';', ':', '\''][..], "");
+    println!("{}", s);
+    0
+}
