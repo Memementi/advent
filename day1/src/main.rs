@@ -18,8 +18,7 @@ fn main() {
         let mut calibration_total = 0;
         for line in lines {
             if let Ok(text) = line {
-                get_calibration_value(text);
-                break;
+                calibration_total += get_calibration_value(text);
             }
         }
         println!("Total: {}", calibration_total);
@@ -32,8 +31,17 @@ where P: AsRef<Path>, {
     Ok(io::BufReader::new(file).lines())
 }
 
-fn get_calibration_value(line: String) -> i32 {
-    let s = line.replace(&['(', ')', ',', '\"', '.', ';', ':', '\''][..], "");
-    println!("{}", s);
-    0
+fn get_calibration_value(line: String) -> u32 {
+    let mut first_int = 99;
+    let mut last_int = 99;
+    for character in line.chars() {
+        if character.is_digit(10) {
+            let digit = character.to_digit(10).unwrap();
+            last_int = digit;
+            if first_int == 99 {
+                first_int = digit;
+            }
+        }
+    }
+    first_int*10 + last_int
 }
