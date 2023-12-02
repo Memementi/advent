@@ -3,6 +3,7 @@ use std::fs;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
+use aho_corasick::AhoCorasick;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -18,7 +19,8 @@ fn main() {
         let mut calibration_total = 0;
         for line in lines {
             if let Ok(text) = line {
-                calibration_total += get_calibration_value(text);
+                let replaced_text = replace_substrings(text);
+                calibration_total += get_calibration_value(replaced_text);
             }
         }
         println!("Total: {}", calibration_total);
@@ -43,5 +45,17 @@ fn get_calibration_value(line: String) -> u32 {
             }
         }
     }
+    println!("{} -> {} + {}", line, first_int, last_int);
     first_int*10 + last_int
+}
+
+fn replace_substrings(line: String) -> String {
+    let mut new_line = line;
+    let numbers = &["0","1","2","3","4","5","6","7","8","9"];
+    let num_strings = &["zero","one","two","three","four","five","six","seven","eight","nine"];
+    
+    let ac = AhoCorasick::new(num_strings);
+    let result = ac.replace_all(&new_line, numbers);
+    // println!("{} -> {}", new_line, result);
+    result
 }
